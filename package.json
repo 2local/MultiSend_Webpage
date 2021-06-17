@@ -1,0 +1,30 @@
+{
+  "name": "erc-1400",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/et-taousy/erc-1400.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/et-taousy/erc-1400/issues"
+  },
+  "homepage": "https://github.com/et-taousy/erc-1400#readme",
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^1.0.42",
+    "ethereumjs-tx": "^2.1.2",
+    "openzeppelin-solidity": "^3.1.0",
+    "solidity-coverage": "^0.7.0",
+    "xlsx": "^0.16.5"
+  },
+  "keywords": []
+}
