@@ -90,7 +90,7 @@ class Balances extends React.Component{
               </Col>
               <Col md="4">
                 <h5>{this.state.ether_balance}</h5>
-                <p>Your Ether balance </p>
+                <p>Your BNB balance </p>
               </Col>
             </Row>
           </Container>

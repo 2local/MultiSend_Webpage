@@ -52,6 +52,8 @@ class Bulk extends React.Component{
         this.send_amount = this.send_amount.bind(this);
         this.setStartDate = this.setStartDate.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
+
+        this.tokenInputTimer = null;
     }
     async componentDidMount(){
       await this.loadWallets(parseInt(0));                                          // load common amounts
@@ -64,8 +66,8 @@ class Bulk extends React.Component{
     }
     setData(data, dataInfo){
       let dataToArea = ''
-      for(let item of data){
-        dataToArea+=item[0]+','+item[1]+' '
+      for(let item of data) { console.log('>>>>>>', item);
+        if (item.length > 1) dataToArea+=item[0]+','+item[1]+' '
       }
       this.setState({json_wallets: dataToArea});
     }
@@ -140,27 +142,36 @@ class Bulk extends React.Component{
           } 
         }
     }
-    async setERC20Token(tokenAddr){
-      console.log(tokenAddr);
-      if(validate_address(tokenAddr)){
-        this.props.setToken(tokenAddr);
-        let decimals = await get_decimals(tokenAddr);             // get token's decimals
-        let symbol = await get_symbol(tokenAddr);                 // get token's symbol
-        let name = await get_name(tokenAddr);                     // get token's name
-        let totalSupply = await get_totalSupply(tokenAddr);       // get token's totalSupply
-        
-        this.setState({                                       // update token state
-          decimals: decimals, 
-          symbol: symbol, 
-          name: name, 
-          totalSupply: totalSupply
-        });
-                                                              
-        localStorage.setItem('token', tokenAddr);                 // save token state
-        this.loadWallets(parseInt(0));
-      } else{
-        toast('Invalid Token!', { appearance: 'error' })
-      } 
+    
+    setERC20Token(tokenAddr){
+      this.setState({token: tokenAddr});
+      if (this.tokenInputTimer != null) {
+        clearTimeout(this.tokenInputTimer);
+        this.tokenInputTimer = null;
+      }
+
+      this.tokenInputTimer = setTimeout(async () => {
+        if(validate_address(tokenAddr)){
+          let decimals = await get_decimals(tokenAddr);             // get token's decimals
+          let symbol = await get_symbol(tokenAddr);                 // get token's symbol
+          let name = await get_name(tokenAddr);                     // get token's name
+          let totalSupply = await get_totalSupply(tokenAddr);       // get token's totalSupply
+          
+          this.setState({                                       // update token state
+            decimals: decimals, 
+            symbol: symbol, 
+            name: name, 
+            totalSupply: totalSupply
+          });
+                                                                
+          localStorage.setItem('token', tokenAddr);                 // save token state
+          this.loadWallets(parseInt(0));
+
+          this.tokenInputTimer = null;
+        } else{
+          toast('Invalid Token!', { appearance: 'error' })
+        } 
+      }, 1000);
     }
     async setStartDate(date){
       await this.setState({startDate: date});
@@ -208,7 +219,7 @@ class Bulk extends React.Component{
                       Token address
                     </Form.Label>
                     <Col sm="6">
-                      <Form.Control value={this.props.token} name="token" onChange={(e)=>this.setERC20Token(e.target.value)} placeholder="Token address" />
+                      <Form.Control value={this.state.token} name="token" onChange={(e)=>this.setERC20Token(e.target.value)} placeholder="Token address" />
                     </Col>
                     <Col sm="2">
                       <Form.Control value={this.state.decimals} name="decimals" onChange={this.handleChange} placeholder="decimals" />
